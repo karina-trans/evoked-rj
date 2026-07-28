@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingressos - Venda Antecipada</title>
+    <style>
+body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000000; 
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            
+            /* DEVOLVENDO OS FLYERS LATERAIS */
+            background-image: url('seu-flyer.jpg'), url('seu-flyer.jpg');
+            background-position: left center, right center;
+            background-repeat: no-repeat, no-repeat;
+            background-size: contain, contain;
+            background-attachment: fixed;
+        }
+
+        /* O flyer agora é o fundo exclusivo desta caixa central */
+        .container {
+            background-image: url('seu-flyer.jpg');
+            background-size: cover;
+            background-position: center;
+            /* O padding cria a "borda vazando" do flyer ao redor do formulário */
+            padding: 15px; 
+            border-radius: 8px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.8);
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            margin: 20px;
+            box-sizing: border-box;
+        }
+
+        /* A caixa escura onde os textos realmente ficam, para dar leitura */
+        .content-wrapper {
+            background-color: rgba(18, 18, 18, 0.95); 
+            padding: 25px;
+            border-radius: 6px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        /* ESTILO DA CAIXA DE LOTE */
+        .lote-box {
+            background-color: #8b0000;
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 2px dashed #ff4a4a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 { color: #ffffff; margin-bottom: 20px; margin-top: 0; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; }
+        
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #333; 
+            border-radius: 4px; 
+            background-color: #1a1a1a; 
+            color: #fff; 
+            box-sizing: border-box;
+            font-size: 16px; 
+        }
+        input:focus { border-color: #8b0000; outline: none; }
+
+        .error-message { color: #ff4a4a; font-size: 12px; margin-top: 5px; display: none; }
+        
+        button, .btn-link {
+            width: 100%; padding: 14px; color: white; border: none; border-radius: 4px;
+            font-size: 16px; cursor: pointer; font-weight: bold; transition: background-color 0.3s;
+            box-sizing: border-box; display: inline-block; text-decoration: none; margin-bottom: 12px;
+        }
+        .btn-primary { background-color: #8b0000; }
+        .btn-primary:hover { background-color: #a50000; }
+        .btn-primary:disabled { background-color: #555; cursor: not-allowed; }
+        
+        .btn-pagseguro { background-color: #f37021; }
+        .btn-pagseguro:hover { background-color: #ff843d; }
+        
+        .btn-pix { background-color: #32bcad; }
+        .btn-pix:hover { background-color: #4cd7c8; }
+
+        #payment-options, #pix-area { display: none; }
+        
+        .qr-code-placeholder { width: 200px; height: 200px; background-color: #333; margin: 20px auto; display: flex; justify-content: center; align-items: center; border: 2px dashed #666; }
+        .qr-code-placeholder img { max-width: 100%; height: auto; }
+        .copia-cola { background-color: #1a1a1a; padding: 12px; border-radius: 4px; font-family: monospace; word-break: break-all; margin-bottom: 15px; font-size: 13px; border: 1px solid #333; }
+        .instrucoes { font-size: 13px; color: #aaa; margin-top: 15px; border-top: 1px solid #333; padding-top: 15px; text-align: left; line-height: 1.4; }
+
+        @media (max-width: 600px) {
+            .container { margin: 10px; padding: 10px; }
+            .content-wrapper { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Camada escura por cima do fundo do flyer -->
+    <div class="content-wrapper">
+        
+        <!-- ETAPA 1: Formulário -->
+        <div id="form-section">
+            <h2>Garantir Ingresso</h2>
+            <form id="ingressoForm" novalidate>
+                <div class="form-group">
+                    <label for="nome">Nome Completo (Para a lista):</label>
+                    <input type="text" id="nome" required placeholder="Digite seu nome">
+                </div>
+                <div class="form-group">
+                    <label for="documento">Documento (RG ou CPF):</label>
+                    <input type="text" id="documento" required placeholder="Digite o número do documento">
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail:</label>
+                    <input type="email" id="email" required placeholder="exemplo@email.com">
+                    <div class="error-message" id="email-error">Por favor, insira um e-mail válido com @.</div>
+                </div>
+                <div class="form-group">
+                    <label for="telefone">Telefone / WhatsApp:</label>
+                    <input type="tel" id="telefone" required placeholder="(00) 00000-0000" maxlength="15">
+                    <div class="error-message" id="telefone-error">O telefone deve conter o DDD e número completo.</div>
+                </div>
+                <button type="submit" id="btnSubmit" class="btn-primary">Avançar para Pagamento</button>
+            </form>
+        </div>
+
+        <!-- ETAPA 2: Pagamento -->
+        <div id="payment-options">
+            
+            <div class="lote-box">
+                2º LOTE - R$ 45,00
+            </div>
+
+            <h2>Escolha como pagar</h2>
+            <p>Seus dados foram salvos! Escolha a melhor opção abaixo para garantir sua vaga:</p>
+            
+            <!-- COLE SEU LINK DO PAGSEGURO AQUI -->
+            <a href="https://pag.ae/81-pxztHN" target="_blank" class="btn-link btn-pagseguro" id="linkPagSeguro">
+                Pagar com Cartão (PagSeguro, com taxa)
+            </a>
+
+            <button class="btn-pix" id="btnShowPix">Pagar com PIX</button>
+
+            <div id="pix-area">
+                <div class="qr-code-placeholder">
+                    <!-- A IMAGEM DO QR CODE ESTÁ AQUI -->
+                    <img src="QRcode.jpg" alt="QR Code Pix">
+                </div>
+                <p>Pix Copia e Cola:</p>
+                
+                <!-- COLOQUE SUA CHAVE PIX REAL AQUI NO LUGAR DESSE TEXTO GRANDE -->
+                <div class="copia-cola" id="chavePix">00020126580014BR.GOV.BCB.PIX0136d29dfde6-70e2-48d9-a1b5-c7aca7054a6e520400005303986540545.005802BR5925Karina Rodrigues Albuquer6009SAO PAULO62140510H2hnW7kufK6304E5DA</div>
+                
+                <!-- NOVO BOTÃO DE COPIAR -->
+                <button type="button" class="btn-pix" id="btnCopiarPix" style="margin-top: 5px; padding: 10px; font-size: 14px;">
+                    Copiar Código Pix
+                </button>
+            </div>
+    </div>
+</div>
+
+<script>
+    const telefoneInput = document.getElementById('telefone');
+    const emailInput = document.getElementById('email');
+
+    telefoneInput.addEventListener('input', function(e) {
+        let v = e.target.value.replace(/\D/g, ''); 
+        if (v.length > 11) v = v.substring(0, 11);
+        if (v.length > 10) {
+            v = v.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+        } else if (v.length > 6) {
+            v = v.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+        } else if (v.length > 2) {
+            v = v.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+        }
+        e.target.value = v;
+    });
+
+    function validaEmail(email) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    }
+
+    function validaTelefone(tel) {
+        const numeros = tel.replace(/\D/g, '');
+        return numeros.length === 10 || numeros.length === 11;
+    }
+
+document.getElementById('ingressoForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const nome = document.getElementById('nome').value.trim();
+        const documento = document.getElementById('documento').value.trim();
+        const email = emailInput.value.trim();
+        const telefone = telefoneInput.value.trim();
+        let formValido = true;
+
+        // VALIDAÇÃO DOS CAMPOS OBRIGATÓRIOS
+        if (nome === "") {
+            alert("Por favor, preencha o seu Nome Completo.");
+            formValido = false;
+            return;
+        }
+
+        if (documento === "") {
+            alert("Por favor, preencha o seu Documento (RG ou CPF).");
+            formValido = false;
+            return;
+        }
+
+        if (telefone === "") {
+            document.getElementById('telefone-error').innerText = "O telefone é obrigatório.";
+            document.getElementById('telefone-error').style.display = 'block';
+            formValido = false;
+        } else if (!validaTelefone(telefone)) {
+            document.getElementById('telefone-error').innerText = "O telefone deve conter o DDD e número completo.";
+            document.getElementById('telefone-error').style.display = 'block';
+            formValido = false;
+        } else {
+            document.getElementById('telefone-error').style.display = 'none';
+        }
+
+        // O E-MAIL SÓ É VALIDADO SE NÃO ESTIVER VAZIO
+        if (email !== "" && !validaEmail(email)) {
+            document.getElementById('email-error').style.display = 'block';
+            formValido = false;
+        } else {
+            document.getElementById('email-error').style.display = 'none';
+        }
+
+        if (!formValido) return; 
+
+        const btn = document.getElementById('btnSubmit');
+        btn.innerText = "Processando...";
+        btn.disabled = true;
+
+        const dados = {
+            nome: nome,
+            documento: documento,
+            email: email, // Vai vazio para a planilha se não preencher, sem quebrar
+            telefone: telefone,
+            data_solicitacao: new Date().toLocaleString('pt-BR')
+        };
+
+        // SUA URL DO GOOGLE JÁ CONFIGURADA
+        const webhookUrl = 'https://script.google.com/macros/s/AKfycby2QsygsZmAz5wZeuuDwkKY2L6AF_K3AZl1H0ra8nctWPpapCp0Pyd0OAA4FQMToONLYQ/exec';
+
+
+        const params = new URLSearchParams(dados).toString();
+        const urlCompleta = webhookUrl + "?" + params;
+
+        fetch(urlCompleta, {
+            method: 'GET',
+            mode: 'no-cors'
+        })
+        .then(() => {
+            document.getElementById('form-section').style.display = 'none';
+            document.getElementById('payment-options').style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert("Houve um erro de rede. Tente novamente.");
+            btn.innerText = "Avançar para Pagamento";
+            btn.disabled = false;
+        });
+    });
+
+    document.getElementById('btnShowPix').addEventListener('click', function() {
+        const pixArea = document.getElementById('pix-area');
+        if (pixArea.style.display === 'block') {
+            pixArea.style.display = 'none';
+        } else {
+            pixArea.style.display = 'block';
+            pixArea.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+// FUNÇÃO PARA COPIAR O CÓDIGO PIX
+    document.getElementById('btnCopiarPix').addEventListener('click', function() {
+        const textoPix = document.getElementById('chavePix').innerText;
+        
+        navigator.clipboard.writeText(textoPix).then(() => {
+            const btnCopiar = document.getElementById('btnCopiarPix');
+            const textoOriginal = btnCopiar.innerText;
+            
+            // Muda o botão temporariamente para dar feedback visual
+            btnCopiar.innerText = "✓ Copiado!";
+            btnCopiar.style.backgroundColor = "#28a745"; // Fica verdinho ao copiar
+            
+            setTimeout(() => {
+                btnCopiar.innerText = textoOriginal;
+                btnCopiar.style.backgroundColor = "#32bcad"; // Volta para a cor original
+            }, 2000);
+        }).catch(err => {
+            console.error('Erro ao copiar: ', err);
+            alert("Não foi possível copiar automaticamente. Por favor, selecione e copie o texto manualmente.");
+        });
+    });
+
+</script>
+
+</body>
+</html>
