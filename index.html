@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ingressos - Venda Antecipada</title>
     <style>
-body {
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #000000; 
             color: #e0e0e0;
@@ -15,7 +15,7 @@ body {
             min-height: 100vh;
             margin: 0;
             
-            /* DEVOLVENDO OS FLYERS LATERAIS */
+            /* FLYERS LATERAIS */
             background-image: url('seu-flyer.jpg'), url('seu-flyer.jpg');
             background-position: left center, right center;
             background-repeat: no-repeat, no-repeat;
@@ -23,12 +23,10 @@ body {
             background-attachment: fixed;
         }
 
-        /* O flyer agora é o fundo exclusivo desta caixa central */
         .container {
-            background-image: url('seu-flyer.jpg');
+            background-image: url('flyer-email.png');
             background-size: cover;
             background-position: center;
-            /* O padding cria a "borda vazando" do flyer ao redor do formulário */
             padding: 15px; 
             border-radius: 8px;
             box-shadow: 0 4px 25px rgba(0,0,0,0.8);
@@ -39,7 +37,6 @@ body {
             box-sizing: border-box;
         }
 
-        /* A caixa escura onde os textos realmente ficam, para dar leitura */
         .content-wrapper {
             background-color: rgba(18, 18, 18, 0.95); 
             padding: 25px;
@@ -48,7 +45,6 @@ body {
             box-sizing: border-box;
         }
 
-        /* ESTILO DA CAIXA DE LOTE */
         .lote-box {
             background-color: #8b0000;
             color: #fff;
@@ -111,12 +107,12 @@ body {
 <body>
 
 <div class="container">
-    <!-- Camada escura por cima do fundo do flyer -->
     <div class="content-wrapper">
         
         <!-- ETAPA 1: Formulário -->
         <div id="form-section">
             <h2>Garantir Ingresso</h2>
+            <h3>1º Lote R$ 35,00 *</h3>
             <form id="ingressoForm" novalidate>
                 <div class="form-group">
                     <label for="nome">Nome Completo (Para a lista):</label>
@@ -136,42 +132,46 @@ body {
                     <input type="tel" id="telefone" required placeholder="(00) 00000-0000" maxlength="15">
                     <div class="error-message" id="telefone-error">O telefone deve conter o DDD e número completo.</div>
                 </div>
+                
+                <p style="font-size: 11px; color: #888; margin-top: 5px; margin-bottom: 15px; text-align: center;">
+                    * Pagamentos via cartão de crédito possuem acréscimo de taxa da operadora.
+                </p>
+                
                 <button type="submit" id="btnSubmit" class="btn-primary">Avançar para Pagamento</button>
             </form>
         </div>
 
         <!-- ETAPA 2: Pagamento -->
         <div id="payment-options">
-            
             <div class="lote-box">
-                2º LOTE - R$ 45,00
+                1º LOTE - R$ 35,00
             </div>
 
             <h2>Escolha como pagar</h2>
-            <p>Seus dados foram salvos! Escolha a melhor opção abaixo para garantir sua vaga:</p>
+            <p style="font-size: 14px; color: #ccc;">Escolha a opção desejada para concluir o pagamento:</p>
             
-            <!-- COLE SEU LINK DO PAGSEGURO AQUI -->
-            <a href="https://pag.ae/81-pxztHN" target="_blank" class="btn-link btn-pagseguro" id="linkPagSeguro">
+            <!-- LINK DO PAGSEGURO -->
+            <a href="https://pag.ae/823zsqWVn" target="_blank" class="btn-link btn-pagseguro" id="linkPagSeguro">
                 Pagar com Cartão (PagSeguro, com taxa)
             </a>
 
+            <!-- BOTÃO DO PIX -->
             <button class="btn-pix" id="btnShowPix">Pagar com PIX</button>
 
             <div id="pix-area">
                 <div class="qr-code-placeholder">
-                    <!-- A IMAGEM DO QR CODE ESTÁ AQUI -->
-                    <img src="QRcode.jpg" alt="QR Code Pix">
+                    <img src="QR-CODE.png" alt="QR Code Pix">
                 </div>
                 <p>Pix Copia e Cola:</p>
                 
-                <!-- COLOQUE SUA CHAVE PIX REAL AQUI NO LUGAR DESSE TEXTO GRANDE -->
-                <div class="copia-cola" id="chavePix">00020126580014BR.GOV.BCB.PIX0136d29dfde6-70e2-48d9-a1b5-c7aca7054a6e520400005303986540545.005802BR5925Karina Rodrigues Albuquer6009SAO PAULO62140510H2hnW7kufK6304E5DA</div>
+                <div class="copia-cola" id="chavePix">00020126800014BR.GOV.BCB.PIX0136d29dfde6-70e2-48d9-a1b5-c7aca7054a6e0218LOTE 1 - EVOKED RJ520400005303986540535.005802BR5925Karina Rodrigues Albuquer6009SAO PAULO62140510QlC9etDjXQ63049F0D</div>
                 
-                <!-- NOVO BOTÃO DE COPIAR -->
                 <button type="button" class="btn-pix" id="btnCopiarPix" style="margin-top: 5px; padding: 10px; font-size: 14px;">
                     Copiar Código Pix
                 </button>
             </div>
+        </div>
+
     </div>
 </div>
 
@@ -179,6 +179,12 @@ body {
     const telefoneInput = document.getElementById('telefone');
     const emailInput = document.getElementById('email');
 
+    // Variáveis globais de controle
+    let dadosComprador = {};
+    let dadosEnviados = false;
+    const webhookUrl = 'https://script.google.com/macros/s/AKfycbzyIkqgGuHdU4PUOgOHqOZeYcl8BoeodI8dkGarQLjF2Dn4ep6oJhVqTXkLtZPsAb4fmA/exec';
+
+    // Máscara de Telefone
     telefoneInput.addEventListener('input', function(e) {
         let v = e.target.value.replace(/\D/g, ''); 
         if (v.length > 11) v = v.substring(0, 11);
@@ -202,7 +208,35 @@ body {
         return numeros.length === 10 || numeros.length === 11;
     }
 
-document.getElementById('ingressoForm').addEventListener('submit', function(e) {
+    // FUNÇÃO QUE DISPARA OS DADOS PARA A PLANILHA
+    function enviarParaPlanilha(formaPagamento, callback) {
+        // Se os dados já foram salvos anteriormente nesta mesma sessão, não duplica a linha
+        if (dadosEnviados) {
+            if (callback) callback();
+            return;
+        }
+
+        dadosComprador.pagamento = formaPagamento;
+        const params = new URLSearchParams(dadosComprador).toString();
+        const urlCompleta = webhookUrl + "?" + params;
+
+        fetch(urlCompleta, {
+            method: 'GET',
+            mode: 'no-cors'
+        })
+        .then(() => {
+            dadosEnviados = true;
+            if (callback) callback();
+        })
+        .catch(error => {
+            console.error('Erro ao salvar na planilha:', error);
+            // Prossegue com o fluxo de pagamento para não travar o cliente em caso de instabilidade
+            if (callback) callback();
+        });
+    }
+
+    // ETAPA 1: ENVIO DO FORMULÁRIO (Valida e Guarda na Memória)
+    document.getElementById('ingressoForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
         const nome = document.getElementById('nome').value.trim();
@@ -211,16 +245,13 @@ document.getElementById('ingressoForm').addEventListener('submit', function(e) {
         const telefone = telefoneInput.value.trim();
         let formValido = true;
 
-        // VALIDAÇÃO DOS CAMPOS OBRIGATÓRIOS
         if (nome === "") {
             alert("Por favor, preencha o seu Nome Completo.");
-            formValido = false;
             return;
         }
 
         if (documento === "") {
             alert("Por favor, preencha o seu Documento (RG ou CPF).");
-            formValido = false;
             return;
         }
 
@@ -236,7 +267,6 @@ document.getElementById('ingressoForm').addEventListener('submit', function(e) {
             document.getElementById('telefone-error').style.display = 'none';
         }
 
-        // O E-MAIL SÓ É VALIDADO SE NÃO ESTIVER VAZIO
         if (email !== "" && !validaEmail(email)) {
             document.getElementById('email-error').style.display = 'block';
             formValido = false;
@@ -246,51 +276,45 @@ document.getElementById('ingressoForm').addEventListener('submit', function(e) {
 
         if (!formValido) return; 
 
-        const btn = document.getElementById('btnSubmit');
-        btn.innerText = "Processando...";
-        btn.disabled = true;
-
-        const dados = {
+        // Salva temporariamente os dados na memória (não envia para a planilha ainda)
+        dadosComprador = {
             nome: nome,
             documento: documento,
-            email: email, // Vai vazio para a planilha se não preencher, sem quebrar
+            email: email,
             telefone: telefone,
             data_solicitacao: new Date().toLocaleString('pt-BR')
         };
 
-        // SUA URL DO GOOGLE JÁ CONFIGURADA
-        const webhookUrl = 'https://script.google.com/macros/s/AKfycby2QsygsZmAz5wZeuuDwkKY2L6AF_K3AZl1H0ra8nctWPpapCp0Pyd0OAA4FQMToONLYQ/exec';
+        // Troca para a tela de pagamento imediatamente
+        document.getElementById('form-section').style.display = 'none';
+        document.getElementById('payment-options').style.display = 'block';
+    });
 
+    // ETAPA 2.1: CLIQUE NO PAGSEGURO
+    document.getElementById('linkPagSeguro').addEventListener('click', function(e) {
+        e.preventDefault();
+        const urlDestino = this.href;
 
-        const params = new URLSearchParams(dados).toString();
-        const urlCompleta = webhookUrl + "?" + params;
-
-        fetch(urlCompleta, {
-            method: 'GET',
-            mode: 'no-cors'
-        })
-        .then(() => {
-            document.getElementById('form-section').style.display = 'none';
-            document.getElementById('payment-options').style.display = 'block';
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert("Houve um erro de rede. Tente novamente.");
-            btn.innerText = "Avançar para Pagamento";
-            btn.disabled = false;
+        enviarParaPlanilha('CARTAO', function() {
+            window.open(urlDestino, '_blank');
         });
     });
 
+    // ETAPA 2.2: CLIQUE NO BOTÃO PIX
     document.getElementById('btnShowPix').addEventListener('click', function() {
         const pixArea = document.getElementById('pix-area');
-        if (pixArea.style.display === 'block') {
-            pixArea.style.display = 'none';
-        } else {
-            pixArea.style.display = 'block';
-            pixArea.scrollIntoView({ behavior: 'smooth' });
-        }
+
+        enviarParaPlanilha('PIX', function() {
+            if (pixArea.style.display === 'block') {
+                pixArea.style.display = 'none';
+            } else {
+                pixArea.style.display = 'block';
+                pixArea.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
     });
-// FUNÇÃO PARA COPIAR O CÓDIGO PIX
+
+    // COPIAR CÓDIGO PIX
     document.getElementById('btnCopiarPix').addEventListener('click', function() {
         const textoPix = document.getElementById('chavePix').innerText;
         
@@ -298,20 +322,18 @@ document.getElementById('ingressoForm').addEventListener('submit', function(e) {
             const btnCopiar = document.getElementById('btnCopiarPix');
             const textoOriginal = btnCopiar.innerText;
             
-            // Muda o botão temporariamente para dar feedback visual
             btnCopiar.innerText = "✓ Copiado!";
-            btnCopiar.style.backgroundColor = "#28a745"; // Fica verdinho ao copiar
+            btnCopiar.style.backgroundColor = "#28a745";
             
             setTimeout(() => {
                 btnCopiar.innerText = textoOriginal;
-                btnCopiar.style.backgroundColor = "#32bcad"; // Volta para a cor original
+                btnCopiar.style.backgroundColor = "#32bcad";
             }, 2000);
         }).catch(err => {
             console.error('Erro ao copiar: ', err);
             alert("Não foi possível copiar automaticamente. Por favor, selecione e copie o texto manualmente.");
         });
     });
-
 </script>
 
 </body>
