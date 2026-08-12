@@ -98,6 +98,27 @@
         .copia-cola { background-color: #1a1a1a; padding: 12px; border-radius: 4px; font-family: monospace; word-break: break-all; margin-bottom: 15px; font-size: 13px; border: 1px solid #333; }
         .instrucoes { font-size: 13px; color: #aaa; margin-top: 15px; border-top: 1px solid #333; padding-top: 15px; text-align: left; line-height: 1.4; }
 
+        /* ESTILO DO SUPORTE COM FUNDO ESCURO */
+        .suporte-box {
+            margin-top: 25px;
+            padding: 12px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 1px solid #333;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #ccc;
+            text-align: center;
+        }
+
+        .suporte-box a {
+            color: #25D366;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 14px;
+        }
+
         @media (max-width: 600px) {
             .container { margin: 10px; padding: 10px; }
             .content-wrapper { padding: 15px; }
@@ -111,7 +132,7 @@
         
         <!-- ETAPA 1: Formulário -->
         <div id="form-section">
-<h1>EVOKED NO RJ!</h1>
+            <h1>EVOKED NO RJ!</h1>
             <h2>Garantir Ingresso</h2>
             <h3>1º Lote R$ 35,00 *</h3>
             <form id="ingressoForm" novalidate>
@@ -173,15 +194,15 @@
             </div>
         </div>
 
-
-    <!-- SUPORTE E CONTATO (Cole antes do último </div> da classe content-wrapper) -->
-<div style="margin-top: 20px; font-size: 12px; color: #aaa; text-align: center; border-top: 1px solid #333; padding-top: 15px;">
-    Para qualquer problema ou dúvida, entre em contato via WhatsApp:<br>
-    <a href="https://wa.me/5521964311309" target="_blank" style="color: #25D366; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 6px; font-size: 13px;">
-        💬 (21) 96431-1309
-    </a>
+        <!-- SUPORTE DENTRO DO CONTENT-WRAPPER COM FUNDO DESTACADO -->
+        <div class="suporte-box">
+            Dúvidas ou problemas? Fale conosco no WhatsApp:<br>
+            <a href="https://wa.me/5521964311309" target="_blank">
+                💬 (21) 96431-1309
+            </a>
         </div>
-</div>
+
+    </div>
 </div>
 
 <script>
@@ -219,7 +240,6 @@
 
     // FUNÇÃO QUE DISPARA OS DADOS PARA A PLANILHA
     function enviarParaPlanilha(formaPagamento, callback) {
-        // Se os dados já foram salvos anteriormente nesta mesma sessão, não duplica a linha
         if (dadosEnviados) {
             if (callback) callback();
             return;
@@ -239,12 +259,11 @@
         })
         .catch(error => {
             console.error('Erro ao salvar na planilha:', error);
-            // Prossegue com o fluxo de pagamento para não travar o cliente em caso de instabilidade
             if (callback) callback();
         });
     }
 
-    // ETAPA 1: ENVIO DO FORMULÁRIO (Valida e Guarda na Memória)
+    // ETAPA 1: ENVIO DO FORMULÁRIO
     document.getElementById('ingressoForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -285,7 +304,6 @@
 
         if (!formValido) return; 
 
-        // Salva temporariamente os dados na memória (não envia para a planilha ainda)
         dadosComprador = {
             nome: nome,
             documento: documento,
@@ -294,7 +312,6 @@
             data_solicitacao: new Date().toLocaleString('pt-BR')
         };
 
-        // Troca para a tela de pagamento imediatamente
         document.getElementById('form-section').style.display = 'none';
         document.getElementById('payment-options').style.display = 'block';
     });
