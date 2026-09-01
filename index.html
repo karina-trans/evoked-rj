@@ -98,7 +98,7 @@
         .copia-cola { background-color: #1a1a1a; padding: 12px; border-radius: 4px; font-family: monospace; word-break: break-all; margin-bottom: 15px; font-size: 13px; border: 1px solid #333; }
         .instrucoes { font-size: 13px; color: #aaa; margin-top: 15px; border-top: 1px solid #333; padding-top: 15px; text-align: left; line-height: 1.4; }
 
-        /* ESTILO DO SUPORTE COM FUNDO ESCURO */
+        /* SUPORTE WHATSAPP */
         .suporte-box {
             margin-top: 25px;
             padding: 12px;
@@ -134,7 +134,7 @@
         <div id="form-section">
             <h1>EVOKED NO RJ!</h1>
             <h2>Garantir Ingresso</h2>
-            <h3>1º Lote R$ 35,00 *</h3>
+            <h3>2º Lote R$ 45,00 *</h3>
             <form id="ingressoForm" novalidate>
                 <div class="form-group">
                     <label for="nome">Nome Completo (Para a lista):</label>
@@ -166,39 +166,40 @@
         <!-- ETAPA 2: Pagamento -->
         <div id="payment-options">
             <div class="lote-box">
-                1º LOTE - R$ 35,00
+                2º LOTE - R$ 45,00
             </div>
 
             <h2>Escolha como pagar</h2>
             <p style="font-size: 14px; color: #ccc;">Escolha a opção desejada para concluir o pagamento:</p>
             
             <!-- LINK DO PAGSEGURO -->
-            <a href="https://pag.ae/823zsqWVn" target="_blank" class="btn-link btn-pagseguro" id="linkPagSeguro">
+            <a href="https://pag.ae/827h8V-M6" target="_blank" class="btn-link btn-pagseguro" id="linkPagSeguro">
                 Pagar com Cartão (PagSeguro, com taxa)
             </a>
 
             <!-- BOTÃO DO PIX -->
             <button class="btn-pix" id="btnShowPix">Pagar com PIX</button>
 
-<div id="pix-area">
-    <div class="qr-code-placeholder">
-        <img src="QR-CODE.png" alt="QR Code Pix">
-    </div>
-    <p>Pix Copia e Cola:</p>
-    
-    <div class="copia-cola" id="chavePix">00020126800014BR.GOV.BCB.PIX0136d29dfde6-70e2-48d9-a1b5-c7aca7054a6e0218LOTE 1 - EVOKED RJ520400005303986540535.005802BR5925Karina Rodrigues Albuquer6009SAO PAULO62140510QlC9etDjXQ63049F0D</div>
-    
-    <button type="button" class="btn-pix" id="btnCopiarPix" style="margin-top: 5px; padding: 10px; font-size: 14px;">
-        Copiar Código Pix
-    </button>
+            <div id="pix-area">
+                <div class="qr-code-placeholder">
+                    <img id="qrCodeImg" src="QR-CODE.png" alt="QR Code Pix">
+                </div>
+                <p>Pix Copia e Cola:</p>
+                
+                <div class="copia-cola" id="chavePix">00020126580014BR.GOV.BCB.PIX0136d29dfde6-70e2-48d9-a1b5-c7aca7054a6e520400005303986540545.005802BR5925Karina Rodrigues Albuquer6009SAO PAULO62140510dV4XnlYgG96304D957</div>
+                
+                <button type="button" class="btn-pix" id="btnCopiarPix" style="margin-top: 5px; padding: 10px; font-size: 14px;">
+                    Copiar Código Pix
+                </button>
 
-    <!-- AVISO DE CONFIRMAÇÃO POR E-MAIL -->
-    <div style="margin-top: 15px; padding: 10px; background-color: rgba(255, 255, 255, 0.05); border: 1px solid #444; border-radius: 4px; font-size: 12px; color: #ffd700; text-align: center; line-height: 1.4;">
-        📧 <strong>Atenção:</strong> Após realizar a transferência, seu ingresso/voucher será verificado e confirmado via e-mail.
-    </div>
-</div>
+                <!-- AVISO DE CONFIRMAÇÃO E SPAM -->
+                <div style="margin-top: 15px; padding: 10px; background-color: rgba(255, 255, 255, 0.05); border: 1px solid #444; border-radius: 4px; font-size: 12px; color: #ffd700; text-align: center; line-height: 1.4;">
+                    📧 <strong>Atenção:</strong> Seu ingresso será enviado por e-mail após a confirmação. Caso não encontre na caixa de entrada, <strong>verifique a pasta de Spam/Lixo Eletrônico</strong>.
+                </div>
+            </div>
+        </div>
 
-        <!-- SUPORTE DENTRO DO CONTENT-WRAPPER COM FUNDO DESTACADO -->
+        <!-- SUPORTE DENTRO DO CONTENT-WRAPPER -->
         <div class="suporte-box">
             Dúvidas ou problemas? Fale conosco no WhatsApp:<br>
             <a href="https://wa.me/5521964311309" target="_blank">
@@ -213,12 +214,10 @@
     const telefoneInput = document.getElementById('telefone');
     const emailInput = document.getElementById('email');
 
-    // Variáveis globais de controle
     let dadosComprador = {};
     let dadosEnviados = false;
     const webhookUrl = 'https://script.google.com/macros/s/AKfycbzyIkqgGuHdU4PUOgOHqOZeYcl8BoeodI8dkGarQLjF2Dn4ep6oJhVqTXkLtZPsAb4fmA/exec';
 
-    // Máscara de Telefone
     telefoneInput.addEventListener('input', function(e) {
         let v = e.target.value.replace(/\D/g, ''); 
         if (v.length > 11) v = v.substring(0, 11);
@@ -249,7 +248,7 @@
             return;
         }
 
-        dadosComprador.pagamento = formaPagamento;
+        dadosComprador.pagamento = formaPagamento + " (2º Lote)";
         const params = new URLSearchParams(dadosComprador).toString();
         const urlCompleta = webhookUrl + "?" + params;
 
