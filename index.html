@@ -14,7 +14,7 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            
+
             /* FLYERS LATERAIS */
             background-image: url('seu-flyer.jpg'), url('seu-flyer.jpg');
             background-position: left center, right center;
@@ -45,6 +45,27 @@
             box-sizing: border-box;
         }
 
+        /* ESTILO DO VÍDEO RESPONSIVO */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* Proporção 16:9 */
+            height: 0;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
         .lote-box {
             background-color: #8b0000;
             color: #fff;
@@ -61,7 +82,7 @@
         h2 { color: #ffffff; margin-bottom: 20px; margin-top: 0; }
         .form-group { margin-bottom: 15px; text-align: left; }
         label { display: block; margin-bottom: 5px; font-size: 14px; }
-        
+
         input { 
             width: 100%; 
             padding: 12px; 
@@ -75,7 +96,7 @@
         input:focus { border-color: #8b0000; outline: none; }
 
         .error-message { color: #ff4a4a; font-size: 12px; margin-top: 5px; display: none; }
-        
+
         button, .btn-link {
             width: 100%; padding: 14px; color: white; border: none; border-radius: 4px;
             font-size: 16px; cursor: pointer; font-weight: bold; transition: background-color 0.3s;
@@ -84,15 +105,15 @@
         .btn-primary { background-color: #8b0000; }
         .btn-primary:hover { background-color: #a50000; }
         .btn-primary:disabled { background-color: #555; cursor: not-allowed; }
-        
+
         .btn-pagseguro { background-color: #f37021; }
         .btn-pagseguro:hover { background-color: #ff843d; }
-        
+
         .btn-pix { background-color: #32bcad; }
         .btn-pix:hover { background-color: #4cd7c8; }
 
         #payment-options, #pix-area { display: none; }
-        
+
         .qr-code-placeholder { width: 200px; height: 200px; background-color: #333; margin: 20px auto; display: flex; justify-content: center; align-items: center; border: 2px dashed #666; }
         .qr-code-placeholder img { max-width: 100%; height: auto; }
         .copia-cola { background-color: #1a1a1a; padding: 12px; border-radius: 4px; font-family: monospace; word-break: break-all; margin-bottom: 15px; font-size: 13px; border: 1px solid #333; }
@@ -129,7 +150,12 @@
 
 <div class="container">
     <div class="content-wrapper">
-        
+
+        <!-- VÍDEO PROMO DO YOUTUBE -->
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/a-RxbdpaWYw" title="PROMO EVOKED NO RJ" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
         <!-- ETAPA 1: Formulário -->
         <div id="form-section">
             <h1>EVOKED NO RJ!</h1>
@@ -154,11 +180,11 @@
                     <input type="tel" id="telefone" required placeholder="(00) 00000-0000" maxlength="15">
                     <div class="error-message" id="telefone-error">O telefone deve conter o DDD e número completo.</div>
                 </div>
-                
+
                 <p style="font-size: 11px; color: #888; margin-top: 5px; margin-bottom: 15px; text-align: center;">
                     * Pagamentos via cartão de crédito possuem acréscimo de taxa da operadora.
                 </p>
-                
+
                 <button type="submit" id="btnSubmit" class="btn-primary">Avançar para Pagamento</button>
             </form>
         </div>
@@ -171,7 +197,7 @@
 
             <h2>Escolha como pagar</h2>
             <p style="font-size: 14px; color: #ccc;">Escolha a opção desejada para concluir o pagamento:</p>
-            
+
             <!-- LINK DO PAGSEGURO -->
             <a href="https://pag.ae/827h8V-M6" target="_blank" class="btn-link btn-pagseguro" id="linkPagSeguro">
                 Pagar com Cartão (PagSeguro, com taxa)
@@ -185,9 +211,9 @@
                     <img id="qrCodeImg" src="QR-CODE.png" alt="QR Code Pix">
                 </div>
                 <p>Pix Copia e Cola:</p>
-                
+
                 <div class="copia-cola" id="chavePix">00020126580014BR.GOV.BCB.PIX0136d29dfde6-70e2-48d9-a1b5-c7aca7054a6e520400005303986540545.005802BR5925Karina Rodrigues Albuquer6009SAO PAULO62140510dV4XnlYgG96304D957</div>
-                
+
                 <button type="button" class="btn-pix" id="btnCopiarPix" style="margin-top: 5px; padding: 10px; font-size: 14px;">
                     Copiar Código Pix
                 </button>
@@ -346,14 +372,14 @@
     // COPIAR CÓDIGO PIX
     document.getElementById('btnCopiarPix').addEventListener('click', function() {
         const textoPix = document.getElementById('chavePix').innerText;
-        
+
         navigator.clipboard.writeText(textoPix).then(() => {
             const btnCopiar = document.getElementById('btnCopiarPix');
             const textoOriginal = btnCopiar.innerText;
-            
+
             btnCopiar.innerText = "✓ Copiado!";
             btnCopiar.style.backgroundColor = "#28a745";
-            
+
             setTimeout(() => {
                 btnCopiar.innerText = textoOriginal;
                 btnCopiar.style.backgroundColor = "#32bcad";
